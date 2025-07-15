@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Url = require('../models/med'); // adjust path if different
+const Url = require('../models/med'); 
 const { nanoid } = require('nanoid');
 
-// POST /shorten
+
 router.post('/shorten', async (req, res) => {
   try {
     const { originalUrl, expiryHours } = req.body;
@@ -23,7 +23,7 @@ router.post('/shorten', async (req, res) => {
 
     await newUrl.save();
 
-    // Assuming your backend is running at http://localhost:3000
+
     const shortLink = `http://localhost:3000/${shortcode}`;
 
     res.json({ shortLink, expiry: expiryDate });
@@ -33,7 +33,7 @@ router.post('/shorten', async (req, res) => {
   }
 });
 
-// GET /:shortcode -> redirect to originalUrl
+
 router.get('/:shortcode', async (req, res) => {
   try {
     const { shortcode } = req.params;

@@ -36,7 +36,7 @@ const App = () => {
 
   return (
     <div className="container">
-      <h1>🩺 Medical URL Shortener</h1>
+      <h1>URL Shortener</h1>
 
       <input
         type="text"
