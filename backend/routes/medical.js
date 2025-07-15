@@ -1,71 +1,57 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "./App.css";
+const express = require('express');
+const router = express.Router();
+const Url = require('../models/med'); // adjust path if different
+const { nanoid } = require('nanoid');
 
-const App = () => {
-  const [originalUrl, setOriginalUrl] = useState("");
-  const [expiryHours, setExpiryHours] = useState(24); // default 24 hours
-  const [shortLink, setShortLink] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [error, setError] = useState("");
+// POST /shorten
+router.post('/shorten', async (req, res) => {
+  try {
+    const { originalUrl, expiryHours } = req.body;
 
-  const handleShorten = async () => {
-    try {
-      const res = await axios.post("http://localhost:3000/shorten", {
-        originalUrl,
-        expiryHours: parseInt(expiryHours)
-      });
-
-      setShortLink(res.data.shortLink);
-      setExpiry(res.data.expiry);
-      setError("");
-    } catch (err) {
-      console.error(err);
-      setError(
-        err.response?.data?.error || "Failed to shorten URL."
-      );
-      setShortLink("");
-      setExpiry("");
+    if (!originalUrl || !expiryHours) {
+      return res.status(400).json({ error: 'Missing originalUrl or expiryHours' });
     }
-  };
 
-  return (
-    <div className="container">
-      <h1>URL Shortener</h1>
+    const shortcode = nanoid(6);
+    const expiryDate = new Date(Date.now() + expiryHours * 60 * 60 * 1000);
 
-      <input
-        type="text"
-        placeholder="Enter your long URL"
-        value={originalUrl}
-        onChange={(e) => setOriginalUrl(e.target.value)}
-      />
+    const newUrl = new Url({
+      originalUrl,
+      shortcode,
+      expiry: expiryDate
+    });
 
-      <input
-        type="number"
-        placeholder="Expiry (hours)"
-        value={expiryHours}
-        onChange={(e) => setExpiryHours(e.target.value)}
-      />
+    await newUrl.save();
 
-      <button onClick={handleShorten}>Shorten URL</button>
+    // Assuming your backend is running at http://localhost:3000
+    const shortLink = `http://localhost:3000/${shortcode}`;
 
-      {shortLink && (
-        <div className="result">
-          <p>
-            Shortened Link:{" "}
-            <a href={shortLink} target="_blank" rel="noopener noreferrer">
-              {shortLink}
-            </a>
-          </p>
-          <p>Expires at: {new Date(expiry).toLocaleString()}</p>
-        </div>
-      )}
+    res.json({ shortLink, expiry: expiryDate });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
-      {error && <p className="error">{error}</p>}
-    </div>
-  );
-};
+// GET /:shortcode -> redirect to originalUrl
+router.get('/:shortcode', async (req, res) => {
+  try {
+    const { shortcode } = req.params;
+    const urlDoc = await Url.findOne({ shortcode });
 
-export default App;
+    if (!urlDoc) {
+      return res.status(404).json({ error: 'Shortcode not found' });
+    }
 
+    if (new Date() > urlDoc.expiry) {
+      return res.status(410).json({ error: 'Link has expired' });
+    }
 
+    return res.redirect(urlDoc.originalUrl);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+module.exports = router;
