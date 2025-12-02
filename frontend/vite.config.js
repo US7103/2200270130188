@@ -7,8 +7,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/shorten": "http://localhost:3000",
-      "/": "http://localhost:3000"
+      "/shorten": "http://localhost:3000"
     }
   }
 })
