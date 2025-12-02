@@ -7,6 +7,10 @@
     {
       "source": "/:shortcode",
       "destination": "https://two200270130188.onrender.com/:shortcode"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
