@@ -1,22 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Url = require('../models/med'); 
-const { nanoid } = require('nanoid');
-
-
-
-const log = require('../../Logging Middleware/index');
-
-router.post('/shorten', async (req, res) => {
-  try {
-    log('UrlShortener', 'INFO', { body: req.body }, 'Shorten URL request received');
-    
-    res.json({ ok: true });
-  } catch (err) {
-    log('UrlShortener', 'ERROR', {}, 'Failed to shorten URL');
-    res.status(500).json({ error: 'Server error' });
-  }
-});
+const  { nanoid } =require('nanoid')
 
 
 router.post('/shorten', async (req, res) => {
