@@ -16,7 +16,7 @@ const App = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:3000/shorten", {
+      const res = await axios.post("/shorten", {
         originalUrl,
         expiryHours: parseInt(expiryHours, 10)
       });

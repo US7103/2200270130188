@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/shorten",
+      "destination": "https://two200270130188.onrender.com/shorten"
+    },
+    {
+      "source": "/:shortcode",
+      "destination": "https://two200270130188.onrender.com/:shortcode"
+    }
+  ]
+}

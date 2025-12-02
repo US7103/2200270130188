@@ -24,7 +24,7 @@ router.post('/shorten', async (req, res) => {
     await newUrl.save();
 
 
-    const shortLink = `http://localhost:3000/${shortcode}`;
+    const shortLink = `${process.env.web_link}/${shortcode}`;
 
     res.json({ shortLink, expiry: expiryDate });
   } catch (err) {

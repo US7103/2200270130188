@@ -4,7 +4,7 @@ const cors = require('cors');
 dotenv.config();
 const app = express();
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({ origin: ['http://localhost:5173','https://two200270130188.onrender.com'] }));
 
 const urlRoutes = require('./routes/medical');
 app.use(express.json());
